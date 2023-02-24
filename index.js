@@ -123,9 +123,9 @@ function viewEmployees() {
   });
 }
 function addEmployee() {
-  prompt({type: 'input', name: 'employeeName', message: 'Enter Employee Name'})
+  prompt({type: 'input', name: 'employeeName', message: 'Enter Employee Name'} )
   .then(answer => {
-    db.promise().query(`INSERT INTO role (title) VALUES ('${answer.roleName}')`)
+    db.promise().query(`INSERT INTO employee (first_name) VALUES ('${answer.first_name}')`)
     .then(([res]) => {
       if (res.affectedRows > 0){
         viewRoles();
@@ -134,36 +134,12 @@ function addEmployee() {
         console.log('Failed to add');
         loadInitialQuestions();
       }
+    }).catch(error => {
+      console.log(error);
+      loadInitialQuestions();
     });
   })
 }
-
-// Function to display all roles
-const viewRole = () => {
-  db.promise().query(`
-    SELECT role.id, role.title, role.salary, department.dept_name
-    FROM role
-    INNER JOIN department ON role.dept_id = department.id
-  `, (error, results) => {
-    if (error) throw error;
-    console.table(results);
-  });
-};
-
-// Function to display all employees
-const viewEmployees = () => {
-  db.promise().query(`
-    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.dept_name, role.salary, manager.first_name AS manager
-    FROM employee
-    INNER JOIN role ON employee.role_id = role.id
-    INNER JOIN department ON role.dept_id = department.id
-    LEFT JOIN employee AS manager ON employee.manager_id = manager.id
-  `, (error, results) => {
-    if (error) throw error;
-    console.table(results);
-  });
-};
-
 
 
 
